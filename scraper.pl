@@ -6,6 +6,7 @@ use Web::Scraper;
 use String::Similarity;
 use URI;
 use Digest::MD5 qw(md5_base64);
+use File::Path qw( make_path);
 
 my ($uri, $period, $factor_limit) = @ARGV;
 
@@ -18,15 +19,13 @@ if(not defined $factor_limit or $period !~ /^\d+$/ or $factor_limit !~ /^\d+\.\d
     exit;
 }
 
-# setup
-
-if ( ! -d DATA ) {
-    mkdir DATA or die sprintf("Can't create data folder: %s.\n$!\n", DATA);
-}
-
 # action
 
-my $file = sprintf("%s/%s", DATA, md5_base64 $uri);
+my ($cache1, $cache2, $digest) = (md5_base64($uri) =~ /^(\w)(\w)(\w+)$/);
+my $path = sprintf("%s/%s/%s", DATA, $cache1, $cache2);
+my $file = sprintf("%s/%s", $path, $digest);
+make_path($path) or die "Can't create path to store: $path\n$!\n";
+
 my $mtime = file_mtime($file);
 my $ctime = time;
 
