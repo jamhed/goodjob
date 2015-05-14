@@ -43,15 +43,14 @@ if ($mtime == 0) {
 my $old_content = read_file($file); 
 my $factor = similarity($content, $old_content);
 
-print $factor;
-
 # factor = 1 - is complete match
 
 if ($factor < $factor_limit) {
     print "change: $factor $uri\n";
-    save_file($file, $content);
-    exit;
 }
+
+save_file($file, $content);
+exit;
 
 # library
 
